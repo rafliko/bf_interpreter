@@ -7,10 +7,10 @@
 #define STACKSIZE 512
 
 char memory[MEMSIZE] = {0};
-char *mp = memory;
+char* mp = memory;
 
 int stack[STACKSIZE] = {0};
-int *sp = stack;
+int* sp = stack;
 
 struct loop {
 	int start;
@@ -30,10 +30,10 @@ int bf_set_loops(char* script)
 	while (script[i] != '\0') {
 		if (script[i] == '[') {
 			*sp = i;
-			++sp;
+			sp++;
 		}
 		if (script[i] == ']') {
-			--sp;
+			sp--;
 			loops[loopcount].start = *sp;
 			loops[loopcount].end = i;
 			loopcount++;
@@ -63,16 +63,16 @@ void bf_execute(char* script)
 	while (script[i] != '\0') {
 		switch (script[i]) {
 		case '>':
-			++mp;
+			mp++;
 			break;
 		case '<':
-			--mp;
+			mp--;
 			break;
 		case '+':
-			++(*mp);
+			(*mp)++;
 			break;
 		case '-':
-			--(*mp);
+			(*mp)--;
 			break;
 		case '.':
 			putchar(*mp);
@@ -120,9 +120,8 @@ int main(int argc, char* argv[])
 	fptr = fopen(argv[1], "r");
 	while ((ch = fgetc(fptr)) != EOF) {
 		*sptr = ch;
-		++sptr;
+		sptr++;
 	}
-	fgets(script, SCRIPTSIZE, fptr);
 	fclose(fptr);
 
 	bf_execute(script);
