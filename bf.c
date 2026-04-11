@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include "colors.h"
 
-//#define DEBUG
+#define DEBUG
 
-#define MEMSIZE 3000
+#define MEMSIZE 30000
 #define SCRIPTSIZE 4096
 #define STACKSIZE 512
 
@@ -23,7 +24,7 @@ int loopcount = 0;
 int bf_set_loops(char* script)
 {
 	#ifdef DEBUG
-	printf("%s\n", script);
+	printf("%s%s\n%s",CYN,script,CRESET);
 	#endif
 	
 	int i = 0;
@@ -34,6 +35,10 @@ int bf_set_loops(char* script)
 		}
 		if (script[i] == ']') {
 			sp--;
+			if (sp < stack) { // underflow
+				printf("%sERROR:%s Unclosed brackets.\n",RED,CRESET);
+				return 1;
+			}
 			loops[loopcount].start = *sp;
 			loops[loopcount].end = i;
 			loopcount++;
@@ -42,22 +47,23 @@ int bf_set_loops(char* script)
 	}
 
 	if (sp != stack) {
-		printf("ERROR: Unclosed brackets.\n");
+		printf("%sERROR:%s Unclosed brackets.\n",RED,CRESET);
 		return 1;
 	}
 
 	#ifdef DEBUG
 	for (int i=0; i<loopcount; i++) {
-		printf("Loop %d: S%d E%d\n",i,loops[i].start,loops[i].end);
+		printf("%sLoop %d: S%d E%d%s\n",CYN,i,loops[i].start,loops[i].end,CRESET);
 	}
+	putchar('\n');
 	#endif
 
 	return 0;
 }
 
-void bf_execute(char* script)
+int bf_execute(char* script)
 {	
-	if (bf_set_loops(script) == 1) return;
+	if (bf_set_loops(script) == 1) return 1;
 	
 	int i = 0;
 	while (script[i] != '\0') {
@@ -103,12 +109,14 @@ void bf_execute(char* script)
 		}
 		i++;
 	}
+
+	return 0;
 }
 
 int main(int argc, char* argv[])
 {
 	if (argc != 2) {
-		printf("ERROR: Invalid number of arguments.\n");
+		printf("%sERROR:%s: Invalid number of arguments.\n",RED,CRESET);
 		return 1;
 	}
 
@@ -118,13 +126,15 @@ int main(int argc, char* argv[])
     char *sptr = script;
 	
 	fptr = fopen(argv[1], "r");
+	if (fptr == NULL) {
+		printf("%sERROR:%s File does not exist.\n",RED,CRESET);
+		return 1;
+	}
 	while ((ch = fgetc(fptr)) != EOF) {
 		*sptr = ch;
 		sptr++;
 	}
 	fclose(fptr);
 
-	bf_execute(script);
-	
-	return 0;
+	return bf_execute(script);
 }
