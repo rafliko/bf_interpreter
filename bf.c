@@ -116,7 +116,7 @@ int bf_execute(char* script)
 int main(int argc, char* argv[])
 {
 	if (argc != 2) {
-		printf("%sERROR:%s: Invalid number of arguments.\n",RED,CRESET);
+		printf("%sERROR:%s Invalid number of arguments.\n",RED,CRESET);
 		return 1;
 	}
 
