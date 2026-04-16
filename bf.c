@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "colors.h"
 
-#define DEBUG
-
 #define MEMSIZE 30000
 #define SCRIPTSIZE 4096
 #define STACKSIZE 512
