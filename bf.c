@@ -30,8 +30,7 @@ int bf_set_loops(char* script)
 		if (script[i] == '[') {
 			*sp = i;
 			sp++;
-		}
-		if (script[i] == ']') {
+		} else if (script[i] == ']') {
 			sp--;
 			if (sp < stack) { // underflow
 				printf("%sERROR:%s Unclosed brackets.\n",RED,CRESET);
@@ -66,44 +65,44 @@ int bf_execute(char* script)
 	int i = 0;
 	while (script[i] != '\0') {
 		switch (script[i]) {
-		case '>':
-			mp++;
-			break;
-		case '<':
-			mp--;
-			break;
-		case '+':
-			(*mp)++;
-			break;
-		case '-':
-			(*mp)--;
-			break;
-		case '.':
-			putchar(*mp);
-			break;
-		case ',':
-			*mp = getchar();
-			break;
-		case '[':
-		    if (*mp == 0) {
+			case '>':
+				mp++;
+				break;
+			case '<':
+				mp--;
+				break;
+			case '+':
+				(*mp)++;
+				break;
+			case '-':
+				(*mp)--;
+				break;
+			case '.':
+				putchar(*mp);
+				break;
+			case ',':
+				*mp = getchar();
+				break;
+			case '[':
+				if (*mp == 0) {
+					for (int j=0; j<loopcount; j++) {
+						if (loops[j].start==i) {
+							i = loops[j].end;
+							break;
+						}
+					}
+				}
+				break;
+			case ']':
 				for (int j=0; j<loopcount; j++) {
-					if (loops[j].start==i) {
-						i = loops[j].end;
+					if (loops[j].end==i) {
+						i = loops[j].start-1;
 						break;
 					}
 				}
-			}
-			break;
-		case ']':
-			for (int j=0; j<loopcount; j++) {
-				if (loops[j].end==i) {
-					i = loops[j].start-1;
-					break;
-				}
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 		i++;
 	}
